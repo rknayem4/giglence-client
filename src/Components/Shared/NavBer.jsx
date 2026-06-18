@@ -1,19 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { use, useState } from "react";
 import { HiBars3, HiXMark } from "react-icons/hi2";
-import { FaBriefcase } from "react-icons/fa";
 import Image from "next/image";
+import { authClient } from "@/lib/auth-client";
+import { UserProfile } from "./UserProfile";
 
 const NavBar = () => {
-  // Replace with your auth state
-  const isLoggedIn = false;
+  const {
+    data: session,
+    isPending, //loading state
+    error, //error object
+    refetch, //refetch the session
+  } = authClient.useSession();
+  console.log(session?.user);
+  const isLoggedIn = session;
 
   const publicLinks = [
     { name: "Home", href: "/" },
     { name: "Browse Tasks", href: "/tasks" },
     { name: "Browse Freelancers", href: "/freelancers" },
+
+    ...(session?.user ? [{ name: "Dashboard", href: "/dashboard" }] : []),
   ];
 
   const privateLinks = [
@@ -40,7 +49,7 @@ const NavBar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center gap-8">
-            {(isLoggedIn ? privateLinks : publicLinks).map((link) => (
+            {publicLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
@@ -55,15 +64,21 @@ const NavBar = () => {
           <div className="hidden lg:flex items-center gap-4">
             {!isLoggedIn ? (
               <Link
-                href="/login"
+                href="/auth/login"
                 className="rounded-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:scale-105"
               >
                 Login
               </Link>
             ) : (
-              <button className="rounded-full border border-red-200 px-5 py-2 text-sm font-medium text-red-500 transition hover:bg-red-50">
-                Logout
-              </button>
+              <div className="flex justify-center gap-3 items-center">
+                <UserProfile />
+                <button
+                  onClick={async () => await authClient.signOut()}
+                  className="rounded-full border border-red-200 px-5 py-2 text-sm font-medium text-red-500 transition hover:bg-red-50"
+                >
+                  Logout
+                </button>
+              </div>
             )}
           </div>
 
@@ -77,7 +92,7 @@ const NavBar = () => {
         {isOpen && (
           <div className="border-t py-5 lg:hidden">
             <div className="flex flex-col gap-4">
-              {(isLoggedIn ? privateLinks : publicLinks).map((link) => (
+              {publicLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
@@ -96,7 +111,10 @@ const NavBar = () => {
                   Login
                 </Link>
               ) : (
-                <button className="mt-2 rounded-lg border border-red-200 px-4 py-3 text-red-500">
+                <button
+                  onClick={async () => await authClient.signOut()}
+                  className="mt-2 rounded-lg border border-red-200 px-4 py-3 text-red-500"
+                >
                   Logout
                 </button>
               )}
