@@ -10,6 +10,7 @@ import {
   FieldError,
   TextArea,
 } from "@heroui/react";
+import { redirect } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -87,7 +88,7 @@ export default function FreelancerRegisterPage() {
     
         console.log(data, error);
 
-    // console.log(data);
+    redirect('/dashboard/freelancer')
   };
 
   return (

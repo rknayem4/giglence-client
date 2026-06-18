@@ -9,8 +9,76 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+      },
+
+      companyName: {
+        type: "string",
+        required: false,
+      },
+
+      companySize: {
+        type: "string",
+        required: false,
+      },
+
+      industry: {
+        type: "string",
+        required: false,
+      },
+
+      website: {
+        type: "string",
+        required: false,
+      },
+
+      location: {
+        type: "string",
+        required: false,
+      },
+
+      description: {
+        type: "string",
+        required: false,
+      },
+
+      title: {
+        type: "string",
+        required: false,
+      },
+
+      skills: {
+        type: "string",
+        required: false,
+      },
+
+      linkedin: {
+        type: "string",
+        required: false,
+      },
+
+      portfolio: {
+        type: "string",
+        required: false,
+      },
+
+      experience: {
+        type: "string",
+        required: false,
+      },
+
+      bio: {
+        type: "string",
+        required: false,
+      },
+    },
+  },
+
   database: mongodbAdapter(db, {
-    // Optional: if you don't provide a client, database transactions won't be enabled.
     client,
   }),
 });

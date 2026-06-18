@@ -14,6 +14,7 @@ import {
   ListBox,
   TextArea,
 } from "@heroui/react";
+import { redirect } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -59,34 +60,52 @@ export default function ClientRegisterPage() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
+    try {
+      const formData = new FormData(e.currentTarget);
 
-    if (formData.get("password") !== formData.get("confirmPassword")) {
-      toast.error("Passwords do not match");
-      return;
+      const name = formData.get("contactPerson");
+      const email = formData.get("email");
+      const password = formData.get("password");
+      const companyName = formData.get("companyName");
+      const companySize = formData.get("companySize");
+      const industry = formData.get("industry");
+      const website = formData.get("website");
+      const location = formData.get("location");
+      const description = formData.get("description");
+
+      const role = "client";
+      const image = imageUrl;
+
+      const { data, error } = await authClient.signUp.email({
+        name,
+        email,
+        password,
+        image,
+        role,
+
+        companyName,
+        companySize,
+        industry,
+        website,
+        location,
+        description,
+      });
+
+      if (error) {
+        toast.error(error.message || "Signup failed");
+        return;
+      }
+
+      console.log("Signup Success:", data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong");
+    } finally {
+      redirect("/dashboard/client");
     }
-
-    const { confirmPassword, contactPerson, ...dataForm } =
-      Object.fromEntries(formData);
-
-    const { data, error } = await authClient.signUp.email({
-      email: dataForm.email,
-      password: dataForm.password,
-      name: dataForm.contactPerson,
-      role: "client",
-      companyName: dataForm.companyName,
-      companySize: dataForm.companySize,
-      industry: dataForm.industry,
-      website: dataForm.website,
-      location: dataForm.location,
-      description: dataForm.description,
-      image: imageUrl,
-    });
-
-    console.log(data, error);
   };
 
   const companySizes = [
@@ -110,7 +129,7 @@ export default function ClientRegisterPage() {
       </div>
 
       <Form
-        onSubmit={handleSubmit}
+        onSubmit={onSubmit}
         className="rounded-3xl border border-gray-100 bg-white p-6 shadow-xl md:p-10"
       >
         <section className="w-full">

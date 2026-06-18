@@ -22,7 +22,9 @@ const NavBar = () => {
     { name: "Browse Tasks", href: "/tasks" },
     { name: "Browse Freelancers", href: "/freelancers" },
 
-    ...(session?.user ? [{ name: "Dashboard", href: "/dashboard" }] : []),
+    ...(session?.user.role =="client" ? [{ name: "Dashboard", href: "/dashboard/client" }] : []),
+    ...(session?.user.role =="freelancer" ? [{ name: "Dashboard", href: "/dashboard/freelancer" }] : []),
+    ...(session?.user.role =="admin" ? [{ name: "Dashboard", href: "/dashboard/admin" }] : []),
   ];
 
   const privateLinks = [
