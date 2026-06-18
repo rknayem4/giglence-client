@@ -1,11 +1,111 @@
-import React from 'react';
+"use client";
 
-const NavBer = () => {
+import Link from "next/link";
+import { useState } from "react";
+import { HiBars3, HiXMark } from "react-icons/hi2";
+import { FaBriefcase } from "react-icons/fa";
+import Image from "next/image";
+
+const NavBar = () => {
+  // Replace with your auth state
+  const isLoggedIn = false;
+
+  const publicLinks = [
+    { name: "Home", href: "/" },
+    { name: "Browse Tasks", href: "/tasks" },
+    { name: "Browse Freelancers", href: "/freelancers" },
+  ];
+
+  const privateLinks = [
+    { name: "Dashboard", href: "/dashboard" },
+    { name: "Profile", href: "/profile" },
+  ];
+
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <div>
-      Nav Ber Page
-    </div>
+    <nav className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-md">
+      <div className="container mx-auto px-6">
+        <div className="flex h-20 items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/assets/logo.png"
+              width={180}
+              height={60}
+              alt="Giglance Logo"
+              className="object-contain"
+            />
+          </Link>
+
+          {/* Desktop Menu */}
+          <div className="hidden lg:flex items-center gap-8">
+            {(isLoggedIn ? privateLinks : publicLinks).map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="font-medium text-[#333333] transition hover:text-[#3B82F6]"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+
+          {/* Right Side */}
+          <div className="hidden lg:flex items-center gap-4">
+            {!isLoggedIn ? (
+              <Link
+                href="/login"
+                className="rounded-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:scale-105"
+              >
+                Login
+              </Link>
+            ) : (
+              <button className="rounded-full border border-red-200 px-5 py-2 text-sm font-medium text-red-500 transition hover:bg-red-50">
+                Logout
+              </button>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button onClick={() => setIsOpen(!isOpen)} className="lg:hidden">
+            {isOpen ? <HiXMark size={28} /> : <HiBars3 size={28} />}
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        {isOpen && (
+          <div className="border-t py-5 lg:hidden">
+            <div className="flex flex-col gap-4">
+              {(isLoggedIn ? privateLinks : publicLinks).map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="font-medium text-[#333333] hover:text-[#3B82F6]"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+
+              {!isLoggedIn ? (
+                <Link
+                  href="/login"
+                  className="mt-2 rounded-lg bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] px-4 py-3 text-center font-medium text-white"
+                >
+                  Login
+                </Link>
+              ) : (
+                <button className="mt-2 rounded-lg border border-red-200 px-4 py-3 text-red-500">
+                  Logout
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </nav>
   );
 };
 
-export default NavBer;
+export default NavBar;
