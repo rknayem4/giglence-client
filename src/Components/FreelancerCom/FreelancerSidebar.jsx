@@ -48,13 +48,7 @@ const links = [
 
 export default function SidebarFreelancer() {
   const pathname = usePathname();
-  const {
-    data: session,
-    isPending, //loading state
-    error, //error object
-    refetch, //refetch the session
-  } = authClient.useSession();
-  console.log(session);
+  const { data: session } = authClient.useSession();
 
   return (
     <>

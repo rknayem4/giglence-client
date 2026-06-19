@@ -11,11 +11,12 @@ import {
   ListBox,
   TextArea,
 } from "@heroui/react";
-import { Briefcase, Envelope, ShieldCheck, File } from "@gravity-ui/icons";
-import { redirect } from "next/navigation";
+import { Briefcase, File } from "@gravity-ui/icons";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
+import { createTask } from "@/lib/Action/taskPostApi";
+import { redirect } from "next/navigation";
 
 export default function CreateTaskPage() {
   const { data: session } = authClient.useSession();
@@ -34,30 +35,27 @@ export default function CreateTaskPage() {
         description: formData.get("description"),
         budget: Number(formData.get("budget")),
         deadline: formData.get("deadline"),
-        client_email: session.user.email,
+        client_email: session?.user?.email, // Added optional chaining just in case
+        client_id: session?.user?.id,
         status: "open",
         deliverable_url: formData.get("deliverable_url"),
-        createdAt: new Date().toISOString(), // Injected automatically on submission
       };
 
-      // Replace this endpoint with your task submission API logic
-      const res = await fetch("/api/tasks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(taskData),
-      });
+      // Correctly calling your API function here
+      const result = await createTask(taskData);
 
-      if (!res.ok) {
-        throw new Error("Failed to post task");
+      if (result.acknowledged) {
+        // MongoDB returns { acknowledged: true, insertedId: ... }
+        toast.success("Task posted successfully!");
+      } else {
+        throw new Error("Database failed to save the task");
       }
-
-      toast.success("Task posted successfully!");
-      redirect("/dashboard/client");
     } catch (err) {
       console.error(err);
       toast.error(err.message || "Something went wrong");
     } finally {
       setLoading(false);
+      redirect("/dashboard/client/my-task");
     }
   };
 
@@ -68,8 +66,6 @@ export default function CreateTaskPage() {
     { key: "writing", label: "Content Writing" },
   ];
 
-
-
   return (
     <div className="mx-auto max-w-5xl">
       {/* Heading & Subheading */}
@@ -78,7 +74,8 @@ export default function CreateTaskPage() {
           Post a New Project Task
         </h1>
         <p className="mt-3 text-gray-500">
-          Provide project requirements, deadline details, and set your budget allocation.
+          Provide project requirements, deadline details, and set your budget
+          allocation.
         </p>
       </div>
 
@@ -142,40 +139,6 @@ export default function CreateTaskPage() {
               <FieldError />
             </TextField>
 
-
-
-            {/* Status Select */}
-            {/* <div className="flex flex-col gap-2">
-              <Label className="flex items-center gap-1">
-                <ShieldCheck size={14} /> Status
-              </Label>
-              <Select
-                name="status"
-                className="w-full"
-                placeholder="Select base status"
-                defaultSelectedKeys={["pending"]}
-              >
-                <Select.Trigger>
-                  <Select.Value />
-                  <Select.Indicator />
-                </Select.Trigger>
-                <Select.Popover>
-                  <ListBox>
-                    {statuses.map((stat) => (
-                      <ListBox.Item
-                        key={stat.key}
-                        id={stat.key}
-                        textValue={stat.label}
-                      >
-                        {stat.label}
-                        <ListBox.ItemIndicator />
-                      </ListBox.Item>
-                    ))}
-                  </ListBox>
-                </Select.Popover>
-              </Select>
-            </div> */}
-
             {/* Deliverable URL */}
             <div className="md:col-span-2">
               <TextField name="deliverable_url" type="url">
@@ -202,7 +165,11 @@ export default function CreateTaskPage() {
 
         {/* Form Action Controls */}
         <div className="flex gap-4 justify-center items-center mt-8 w-full">
-          <Button type="reset" variant="secondary" className="px-6 rounded-full">
+          <Button
+            type="reset"
+            variant="secondary"
+            className="px-6 rounded-full"
+          >
             Reset
           </Button>
 
