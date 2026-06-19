@@ -8,13 +8,9 @@ import { authClient } from "@/lib/auth-client";
 import { UserProfile } from "./UserProfile";
 
 const NavBar = () => {
-  const {
-    data: session,
-    isPending, //loading state
-    error, //error object
-    refetch, //refetch the session
-  } = authClient.useSession();
-  console.log(session?.user);
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
+  // console.log(user);
   const isLoggedIn = session;
 
   const publicLinks = [
@@ -22,14 +18,15 @@ const NavBar = () => {
     { name: "Browse Tasks", href: "/tasks" },
     { name: "Browse Freelancers", href: "/freelancers" },
 
-    ...(session?.user.role =="client" ? [{ name: "Dashboard", href: "/dashboard/client" }] : []),
-    ...(session?.user.role =="freelancer" ? [{ name: "Dashboard", href: "/dashboard/freelancer" }] : []),
-    ...(session?.user.role =="admin" ? [{ name: "Dashboard", href: "/dashboard/admin" }] : []),
-  ];
-
-  const privateLinks = [
-    { name: "Dashboard", href: "/dashboard" },
-    { name: "Profile", href: "/profile" },
+    ...(session?.user.role == "client"
+      ? [{ name: "Dashboard", href: "/dashboard/client" }]
+      : []),
+    ...(session?.user.role == "freelancer"
+      ? [{ name: "Dashboard", href: "/dashboard/freelancer" }]
+      : []),
+    ...(session?.user.role == "admin"
+      ? [{ name: "Dashboard", href: "/dashboard/admin" }]
+      : []),
   ];
 
   const [isOpen, setIsOpen] = useState(false);
@@ -38,16 +35,23 @@ const NavBar = () => {
     <nav className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-md">
       <div className="container mx-auto px-6">
         <div className="flex h-20 items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3">
-            <Image
-              src="/assets/logo.png"
-              width={180}
-              height={60}
-              alt="Giglance Logo"
-              className="object-contain"
-            />
-          </Link>
+          <div className="flex gap-4">
+            {/* Mobile Menu Button */}
+            <button onClick={() => setIsOpen(!isOpen)} className="lg:hidden">
+              {isOpen ? <HiXMark size={28} /> : <HiBars3 size={28} />}
+            </button>
+
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-3">
+              <Image
+                src="/assets/logo.png"
+                width={180}
+                height={60}
+                alt="Giglance Logo"
+                className="object-contain"
+              />
+            </Link>
+          </div>
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center gap-8">
@@ -63,7 +67,7 @@ const NavBar = () => {
           </div>
 
           {/* Right Side */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className=" items-center gap-4">
             {!isLoggedIn ? (
               <Link
                 href="/auth/login"
@@ -73,21 +77,10 @@ const NavBar = () => {
               </Link>
             ) : (
               <div className="flex justify-center gap-3 items-center">
-                <UserProfile />
-                <button
-                  onClick={async () => await authClient.signOut()}
-                  className="rounded-full border border-red-200 px-5 py-2 text-sm font-medium text-red-500 transition hover:bg-red-50"
-                >
-                  Logout
-                </button>
+                <UserProfile user={user} />
               </div>
             )}
           </div>
-
-          {/* Mobile Menu Button */}
-          <button onClick={() => setIsOpen(!isOpen)} className="lg:hidden">
-            {isOpen ? <HiXMark size={28} /> : <HiBars3 size={28} />}
-          </button>
         </div>
 
         {/* Mobile Menu */}
@@ -104,22 +97,6 @@ const NavBar = () => {
                   {link.name}
                 </Link>
               ))}
-
-              {!isLoggedIn ? (
-                <Link
-                  href="/login"
-                  className="mt-2 rounded-lg bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] px-4 py-3 text-center font-medium text-white"
-                >
-                  Login
-                </Link>
-              ) : (
-                <button
-                  onClick={async () => await authClient.signOut()}
-                  className="mt-2 rounded-lg border border-red-200 px-4 py-3 text-red-500"
-                >
-                  Logout
-                </button>
-              )}
             </div>
           </div>
         )}

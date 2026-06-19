@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@/lib/auth-client";
 import { Avatar, Button, Dropdown, Label } from "@heroui/react";
 
 export function UserProfile({ user }) {
@@ -9,8 +10,8 @@ export function UserProfile({ user }) {
       <Button aria-label="Menu" variant="none">
         <Avatar>
           <Avatar.Image
-            alt="John Doe"
-            src="https://img.heroui.chat/image/avatar?w=400&h=400&u=3"
+            alt={user.name}
+            src={user.image}
           />
           <Avatar.Fallback>JD</Avatar.Fallback>
         </Avatar>
@@ -30,8 +31,9 @@ export function UserProfile({ user }) {
             id="delete-file"
             textValue="Delete file"
             variant="danger"
+            onClick={async () => await authClient.signOut()}
           >
-            <Label>Delete file</Label>
+            <Label>LogOut</Label>
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Popover>

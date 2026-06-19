@@ -1,6 +1,7 @@
 
+
 import FreelancerRegisterPage from "@/Components/auth/Freelancer";
-import ClientRegisterPage from "@/Components/Shared/RegisterClient";
+import ClientRegisterPage from "@/Components/auth/RegisterClient";
 import { Tabs } from "@heroui/react";
 import React from "react";
 
