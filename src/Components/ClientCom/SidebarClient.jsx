@@ -9,6 +9,7 @@ import {
   ArrowRightFromSquare,
   LayoutHeaderSideContent,
   PersonPencil,
+  SquarePlus,
 } from "@gravity-ui/icons";
 import { authClient } from "@/lib/auth-client";
 import Image from "next/image";
@@ -23,12 +24,17 @@ const links = [
   {
     name: "My Task",
     href: "/dashboard/client/my-task",
-    icon: Person,
+    icon: Briefcase,
   },
   {
     name: "Task Proposals",
     href: "/dashboard/client/task-proposals",
-    icon: Briefcase,
+    icon: Person,
+  },
+  {
+    name: "Task Post",
+    href: "/dashboard/client/task-post",
+    icon: SquarePlus,
   },
   {
     name: "My Expend",
