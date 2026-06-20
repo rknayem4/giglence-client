@@ -35,6 +35,11 @@ const links = [
     icon: Briefcase,
   },
   {
+    name: "My Completed",
+    href: "/dashboard/freelancer/my-completed",
+    icon: Briefcase,
+  },
+  {
     name: "My Earning",
     href: "/dashboard/freelancer/earnings",
     icon: CreditCard,

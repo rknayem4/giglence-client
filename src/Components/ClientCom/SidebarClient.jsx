@@ -27,13 +27,18 @@ const links = [
     icon: Briefcase,
   },
   {
+    name: "Task Post",
+    href: "/dashboard/client/task-post",
+    icon: SquarePlus,
+  },
+  {
     name: "Task Proposals",
     href: "/dashboard/client/task-proposals",
     icon: Person,
   },
   {
-    name: "Task Post",
-    href: "/dashboard/client/task-post",
+    name: "Completed Task",
+    href: "/dashboard/client/completed-task",
     icon: SquarePlus,
   },
   {
