@@ -11,3 +11,22 @@ export const submitProposal = async (proposalData) => {
   if (!res.ok) throw new Error(data.error || "Failed to submit proposal");
   return data;
 };
+
+
+
+export const getFreelancerProposalsById = async (freelancerId) => {
+  if (!freelancerId) return [];
+
+  const res = await fetch(`${baseUrl}/api/freelancer/proposals?freelancerId=${freelancerId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch proposals");
+  }
+
+  return res.json();
+  };

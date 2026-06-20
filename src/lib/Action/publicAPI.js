@@ -15,8 +15,6 @@ export const getOpenTasks = async () => {
   return res.json();
 };
 
-
-
 // Fetch a single task by its database ID
 export const getSingleTask = async (taskId) => {
   const res = await fetch(`${baseUrl}/api/tasks/${taskId}`, {
@@ -27,3 +25,19 @@ export const getSingleTask = async (taskId) => {
   return res.json();
 };
 
+export const getAllFreelancers = async () => {
+  try {
+    const res = await fetch(`${baseUrl}/api/public/freelancers`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+    });
+
+    if (!res.ok)
+      throw new Error("Could not retrieve freelancer marketplace directory.");
+    return await res.json();
+  } catch (error) {
+    console.error("API Error in getAllFreelancers:", error);
+    throw error;
+  }
+};
