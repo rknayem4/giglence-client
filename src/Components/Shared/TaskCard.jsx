@@ -15,7 +15,7 @@ const TaskCard = ({task}) => {
           </span>
           <div className="flex items-center gap-1.5 text-xs text-green-600 bg-green-50 px-2.5 py-1 rounded-full font-medium">
             <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-            Live Open
+            {task.status}
           </div>
         </div>
 

@@ -37,7 +37,7 @@ const MyTaskPage = () => {
         </div>
 
         {/* Dynamic Task Content Feed */}
-        <ClientTasksSection  />
+        <ClientTasksSection  /> 
       </div>
     </div>
   );

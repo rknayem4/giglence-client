@@ -30,3 +30,21 @@ export const getFreelancerProposalsById = async (freelancerId) => {
 
   return res.json();
   };
+
+export const getProposalsByTaskId = async (taskId) => {
+  // Fix: Check for taskId, not clientId
+  if (!taskId) return []; 
+
+  const res = await fetch(`${baseUrl}/api/client/proposals?taskId=${taskId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch proposals for this task");
+  }
+
+  return res.json();
+};

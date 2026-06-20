@@ -7,6 +7,7 @@ import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { authClient } from "@/lib/auth-client";
 import { redirect } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +23,11 @@ export default function LoginPage() {
       password: dataForm.password,
     });
     console.log(data, error);
-    redirect('/')
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    redirect("/");
   };
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#3B82F6]/10 via-white to-[#8B5CF6]/10 px-4 py-10">
