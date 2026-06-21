@@ -6,6 +6,7 @@ import { Input, Select, ListBox, Button } from "@heroui/react";
 import toast from "react-hot-toast";
 import { getOpenTasks } from "@/lib/Action/publicAPI";
 import TaskCard from "@/Components/Shared/TaskCard";
+import { useSearchParams } from "next/navigation";
 
 export default function TaskBrowserPage() {
   const [tasks, setTasks] = useState([]);
@@ -18,6 +19,18 @@ export default function TaskBrowserPage() {
   // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+
+  const searchParams = useSearchParams();
+  const activeCategoryFilter = searchParams.get("category");
+
+  const categories = [
+    { key: "all", label: "All Categories" },
+    { key: "development", label: "Software Development" },
+    { key: "design", label: "UI/UX Design" },
+    { key: "marketing", label: "Digital Marketing" },
+    { key: "writing", label: "Content Writing" },
+    { key: "other", label: "Other Services" },
+  ];
 
   // 1. Fetch data only once on mount
   useEffect(() => {
@@ -36,7 +49,16 @@ export default function TaskBrowserPage() {
     fetchTasks();
   }, []);
 
-  // 2. Compute Filtered Tasks synchronously during rendering pass (No State needed!)
+  // Synchronize incoming homepage query parameters to active component filters
+  useEffect(() => {
+    if (activeCategoryFilter) {
+      setSelectedCategory(activeCategoryFilter.toLowerCase());
+      setCurrentPage(1);
+    }
+  }, [activeCategoryFilter]);
+
+  // 2. Compute Filtered Tasks synchronously during rendering pass
+  // 2. Compute Filtered Tasks synchronously during rendering pass
   const filteredTasks = tasks.filter((task) => {
     // Search filter matching
     const matchesSearch =
@@ -44,11 +66,19 @@ export default function TaskBrowserPage() {
       task.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       task.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
-    // Category filter matching
+    // Find the corresponding category object to cross-check labels if necessary
+    const currentCategoryObject = categories.find(
+      (cat) => cat.key === selectedCategory,
+    );
+
+    // Category filter matching engine
     const matchesCategory =
+      selectedCategory === "all" || // ⭐️ Crucial Fix: Short-circuit immediately if "all" is selected
       !selectedCategory ||
-      selectedCategory === "all" ||
-      task.category?.toLowerCase() === selectedCategory.toLowerCase();
+      task.category?.toLowerCase() === selectedCategory.toLowerCase() ||
+      (currentCategoryObject &&
+        task.category?.toLowerCase() ===
+          currentCategoryObject.label.toLowerCase());
 
     return matchesSearch && matchesCategory;
   });
@@ -66,14 +96,6 @@ export default function TaskBrowserPage() {
     indexOfLastItem,
   );
 
-  const categories = [
-    { key: "all", label: "All Categories" },
-    { key: "development", label: "Software Development" },
-    { key: "design", label: "UI/UX Design" },
-    { key: "marketing", label: "Digital Marketing" },
-    { key: "writing", label: "Content Writing" },
-  ];
-
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       {/* Page Heading */}
@@ -86,9 +108,7 @@ export default function TaskBrowserPage() {
       {/* Search & Filter Bar */}
       <div className="mb-8 grid gap-4 sm:grid-cols-3 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
         <div className="sm:col-span-2">
-          {/* A helper container to style the input with the icon inside */}
           <div className="relative flex items-center w-full">
-            {/* Position the icon absolutely inside the input area */}
             <span className="absolute left-3 z-10 flex items-center pointer-events-none">
               <Magnifier className="text-gray-400" />
             </span>
@@ -100,7 +120,6 @@ export default function TaskBrowserPage() {
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
               }}
-              // Add padding to the left so text doesn't overlap the absolute icon
               className="w-full [&_input]:pl-10"
             />
           </div>
@@ -113,7 +132,7 @@ export default function TaskBrowserPage() {
             onSelectionChange={(keys) => {
               const currentKey = Array.from(keys)[0];
               setSelectedCategory(currentKey || "all");
-              setCurrentPage(1); // Safely clear tracking bounds here
+              setCurrentPage(1);
             }}
           >
             <Select.Trigger>

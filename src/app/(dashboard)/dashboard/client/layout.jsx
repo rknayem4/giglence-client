@@ -1,8 +1,8 @@
 import SidebarClient from "@/Components/ClientCom/SidebarClient";
-import SidebarFreelancer from "@/Components/FreelancerCom/FreelancerSidebar";
+import { RequireRole } from "@/lib/session";
 
-
-export default function FreelancerLayout({ children }) {
+export default async function FreelancerLayout({ children }) {
+  await RequireRole("client");
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex">

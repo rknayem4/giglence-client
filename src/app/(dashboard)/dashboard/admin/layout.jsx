@@ -1,6 +1,8 @@
 import SidebarAdmin from "@/Components/AdminCom/SidebarAdmin";
+import { RequireRole } from "@/lib/session";
 
-export default function AdminLayout({ children }) {
+export default async function AdminLayout({ children }) {
+  await RequireRole("admin");
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex">

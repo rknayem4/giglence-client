@@ -1,5 +1,6 @@
-import { auth } from "./auth"; // path to your Better Auth server instance
+import { redirect } from "next/navigation";
 import { headers } from "next/headers";
+import { auth } from "./auth";
 
 export const getUser = async () => {
   const session = await auth.api.getSession({
@@ -7,4 +8,11 @@ export const getUser = async () => {
   });
   return session.user || null;
 };
+
+export const RequireRole = async (role)=>{
+  const user = await getUser()
+  if(user.role !== role){
+    redirect('/unauthorized')
+  }
+}
 
