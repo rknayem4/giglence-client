@@ -75,6 +75,11 @@ export const auth = betterAuth({
         type: "string",
         required: false,
       },
+      isSuspended: {
+        type: Boolean,
+        required: false,
+        default: false,
+      },
     },
   },
 

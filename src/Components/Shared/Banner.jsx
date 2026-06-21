@@ -35,10 +35,10 @@ const Banner = () => {
           {/* Buttons */}
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
             <Link
-              href="/post-task"
+              href="/freelancers"
               className="rounded-full bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] px-8 py-4 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
             >
-              Post a Task
+              Browse Freelancers
             </Link>
 
             <Link

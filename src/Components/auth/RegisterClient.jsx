@@ -8,9 +8,7 @@ import {
   Label,
   TextField,
   FieldError,
-  Textarea,
   Select,
-  SelectItem,
   ListBox,
   TextArea,
 } from "@heroui/react";
@@ -75,6 +73,7 @@ export default function ClientRegisterPage() {
       const website = formData.get("website");
       const location = formData.get("location");
       const description = formData.get("description");
+      const isSuspended = false;
 
       const role = "client";
       const image = imageUrl;
@@ -92,6 +91,7 @@ export default function ClientRegisterPage() {
         website,
         location,
         description,
+        isSuspended,
       });
 
       if (error) {

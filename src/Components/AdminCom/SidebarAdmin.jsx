@@ -45,7 +45,7 @@ const links = [
 export default function SidebarAdmin() {
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
-  console.log(session);
+  // console.log(session);
 
   return (
     <>
@@ -94,7 +94,7 @@ export default function SidebarAdmin() {
                 {session?.user.name}
               </p>
 
-              <p className="text-sm text-gray-500">Client</p>
+              <p className="text-sm text-gray-500">Admin</p>
             </div>
           </button>
           <button

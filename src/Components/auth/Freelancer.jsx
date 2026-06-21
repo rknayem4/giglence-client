@@ -102,9 +102,14 @@ export default function FreelancerRegisterPage() {
       bio: formData.bio,
       image: imageUrl,
       role: "freelancer",
+      isSuspended: false,
     });
 
     console.log(data, error);
+    if(error){
+      toast.error(error.message)
+      return
+    }
     redirect("/dashboard/freelancer");
   };
 
