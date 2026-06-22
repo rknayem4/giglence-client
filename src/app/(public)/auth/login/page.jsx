@@ -29,6 +29,18 @@ export default function LoginPage() {
     }
     redirect("/");
   };
+
+  const GoogleSignIn = async () => {
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/", // Optional: Where to send the user after successful login
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error("Google authentication failed.");
+    }
+  };
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#3B82F6]/10 via-white to-[#8B5CF6]/10 px-4 py-10">
       <Card className="w-full max-w-md rounded-2xl border border-gray-100 shadow-xl">
@@ -128,7 +140,10 @@ export default function LoginPage() {
           {/* Social Login */}
 
           <div className="space-y-3">
-            <Button className="w-full border-gray-300 bg-white border border-purple-600 text-blue-600">
+            <Button
+              onClick={GoogleSignIn}
+              className="w-full border-gray-300 bg-white border border-purple-600 text-blue-600"
+            >
               <FcGoogle /> Continue with Google
             </Button>
           </div>

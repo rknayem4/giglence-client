@@ -18,7 +18,7 @@ const NavBar = () => {
     { name: "Browse Tasks", href: "/tasks" },
     { name: "Browse Freelancers", href: "/freelancers" },
 
-    ...(session?.user.role == "client"
+    ...(session?.user
       ? [{ name: "Dashboard", href: "/dashboard/client" }]
       : []),
     ...(session?.user.role == "freelancer"

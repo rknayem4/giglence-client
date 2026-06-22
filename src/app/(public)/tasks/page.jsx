@@ -12,14 +12,13 @@ export default function TaskBrowserPage() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Search & Filter States
+  // Filter States triggering server requests
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-
-  // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const [totalPages, setTotalPages] = useState(1);
 
+  const itemsPerPage = 6;
   const searchParams = useSearchParams();
   const activeCategoryFilter = searchParams.get("category");
 
@@ -32,24 +31,7 @@ export default function TaskBrowserPage() {
     { key: "other", label: "Other Services" },
   ];
 
-  // 1. Fetch data only once on mount
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        setLoading(true);
-        const data = await getOpenTasks();
-        setTasks(data);
-      } catch (err) {
-        console.error(err);
-        toast.error("Failed to load available tasks.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTasks();
-  }, []);
-
-  // Synchronize incoming homepage query parameters to active component filters
+  // Sync entry query params safely
   useEffect(() => {
     if (activeCategoryFilter) {
       setSelectedCategory(activeCategoryFilter.toLowerCase());
@@ -57,44 +39,37 @@ export default function TaskBrowserPage() {
     }
   }, [activeCategoryFilter]);
 
-  // 2. Compute Filtered Tasks synchronously during rendering pass
-  // 2. Compute Filtered Tasks synchronously during rendering pass
-  const filteredTasks = tasks.filter((task) => {
-    // Search filter matching
-    const matchesSearch =
-      searchQuery.trim() === "" ||
-      task.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      task.description?.toLowerCase().includes(searchQuery.toLowerCase());
+  // ⭐️ Centralized Server Fetch Mechanism
+  useEffect(() => {
+    const fetchServerData = async () => {
+      try {
+        setLoading(true);
+        // Request segment data bounds from Express backend directly
+        const responseData = await getOpenTasks(
+          currentPage,
+          itemsPerPage,
+          searchQuery,
+          selectedCategory,
+        );
 
-    // Find the corresponding category object to cross-check labels if necessary
-    const currentCategoryObject = categories.find(
-      (cat) => cat.key === selectedCategory,
-    );
+        setTasks(responseData.tasks || []);
+        setTotalPages(responseData.totalPages || 1);
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to fetch fresh project assets from server.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    // Category filter matching engine
-    const matchesCategory =
-      selectedCategory === "all" || // ⭐️ Crucial Fix: Short-circuit immediately if "all" is selected
-      !selectedCategory ||
-      task.category?.toLowerCase() === selectedCategory.toLowerCase() ||
-      (currentCategoryObject &&
-        task.category?.toLowerCase() ===
-          currentCategoryObject.label.toLowerCase());
+    // Optional Debounce fallback can be mapped here to limit keystroke server strain
+    const timer = setTimeout(() => {
+      fetchServerData();
+    }, 300); // 300ms network delay debounce wrapper
 
-    return matchesSearch && matchesCategory;
-  });
-
-  // Reset page number smoothly if calculated elements fall out of index scope
-  const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
-  const activePage =
-    currentPage > totalPages && totalPages > 0 ? 1 : currentPage;
-
-  // Pagination slice limits configuration
-  const indexOfLastItem = activePage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentTasksForPage = filteredTasks.slice(
-    indexOfFirstItem,
-    indexOfLastItem,
-  );
+    return () => clearTimeout(timer);
+  }, [currentPage, searchQuery, selectedCategory]);
+  console.log(selectedCategory);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -118,9 +93,9 @@ export default function TaskBrowserPage() {
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
-                setCurrentPage(1);
+                setCurrentPage(1); // Reset page indices immediately on new keywords
               }}
-              className="w-full [&_input]:pl-10"
+              className="w-full [&_input]:pl-10 pl-9"
             />
           </div>
         </div>
@@ -128,10 +103,10 @@ export default function TaskBrowserPage() {
           <Select
             className="w-full"
             placeholder="Select a category"
-            selectedKeys={[selectedCategory]}
-            onSelectionChange={(keys) => {
-              const currentKey = Array.from(keys)[0];
-              setSelectedCategory(currentKey || "all");
+            selectedKeys={new Set([selectedCategory])}
+            onSelectionChange={(key) => {
+              console.log("Selected:", key);
+              setSelectedCategory(key);
               setCurrentPage(1);
             }}
           >
@@ -164,7 +139,7 @@ export default function TaskBrowserPage() {
             Fetching available projects...
           </p>
         </div>
-      ) : filteredTasks.length === 0 ? (
+      ) : tasks.length === 0 ? (
         <div className="text-center py-20 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
           <Briefcase size={40} className="mx-auto text-gray-300 mb-3" />
           <h3 className="text-lg font-semibold text-gray-700">
@@ -174,7 +149,7 @@ export default function TaskBrowserPage() {
       ) : (
         <>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {currentTasksForPage.map((task) => (
+            {tasks.map((task) => (
               <TaskCard key={task._id} task={task} />
             ))}
           </div>
@@ -183,7 +158,7 @@ export default function TaskBrowserPage() {
             <div className="mt-12 flex items-center justify-center gap-4">
               <Button
                 variant="secondary"
-                disabled={activePage === 1}
+                disabled={currentPage === 1}
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 className="rounded-xl px-4"
               >
@@ -196,7 +171,7 @@ export default function TaskBrowserPage() {
                     key={index + 1}
                     onClick={() => setCurrentPage(index + 1)}
                     className={`h-10 w-10 rounded-xl font-medium transition-all ${
-                      activePage === index + 1
+                      currentPage === index + 1
                         ? "bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] text-white shadow-md"
                         : "bg-white border border-gray-100 text-gray-600 hover:bg-gray-50"
                     }`}
@@ -208,7 +183,7 @@ export default function TaskBrowserPage() {
 
               <Button
                 variant="secondary"
-                disabled={activePage === totalPages}
+                disabled={currentPage === totalPages}
                 onClick={() =>
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }

@@ -68,6 +68,7 @@ export default function ProfileEditPage() {
     location: "",
     description: "",
     image: "",
+    role:""
   });
 
   useEffect(() => {
@@ -80,6 +81,7 @@ export default function ProfileEditPage() {
         location: user.location || "",
         description: user.description || "",
         image: user.image || "",
+        role: user.role || ""
       });
     }
   }, [user]);
@@ -97,6 +99,7 @@ export default function ProfileEditPage() {
     const location = form.location;
 
     const description = form.description;
+    const role = "client"
 
     await authClient.updateUser({
       name: name,
@@ -106,6 +109,7 @@ export default function ProfileEditPage() {
       website: website,
       location: location,
       description: description,
+      role: role,
     });
     redirect("/dashboard/client");
   };
@@ -132,7 +136,7 @@ export default function ProfileEditPage() {
         className="rounded-3xl border border-gray-100 bg-white p-8 shadow-xl"
       >
         <div className="grid gap-5 md:grid-cols-2 w-full">
-          <TextField name="companyName">
+          <TextField name="companyName" isRequired>
             <Label>Company Name</Label>
             <Input
               value={form.companyName}
@@ -145,7 +149,7 @@ export default function ProfileEditPage() {
             />
             <FieldError />
           </TextField>
-          <TextField name="contactPerson">
+          <TextField name="contactPerson" isRequired>
             <Label>Contact Person</Label>
             <Input
               value={form.contactPerson}
@@ -158,7 +162,7 @@ export default function ProfileEditPage() {
             />
             <FieldError />
           </TextField>
-          <TextField name="website">
+          <TextField name="website" isRequired>
             <Label>Website</Label>
             <Input
               value={form.website}

@@ -12,74 +12,70 @@ export const auth = betterAuth({
 
   user: {
     additionalFields: {
-      role: {
-        type: "string",
-      },
-
+      defaultValue: "client",
       companyName: {
         type: "string",
-        required: false,
+        required: true,
       },
-
       companySize: {
         type: "string",
         required: false,
       },
-
       industry: {
         type: "string",
         required: false,
       },
-
       website: {
         type: "string",
         required: false,
       },
-
       location: {
         type: "string",
         required: false,
       },
-
       description: {
         type: "string",
         required: false,
       },
-
       title: {
         type: "string",
         required: false,
       },
-
       skills: {
         type: "string",
         required: false,
       },
-
       linkedin: {
         type: "string",
         required: false,
       },
-
       portfolio: {
         type: "string",
         required: false,
       },
-
       experience: {
         type: "string",
         required: false,
       },
-
       bio: {
         type: "string",
         required: false,
       },
+
       isSuspended: {
-        type: Boolean,
+        type: "boolean",
         required: false,
-        default: false,
+        defaultValue: false,
       },
+    },
+  },
+
+  baseURL: process.env.BETTER_AUTH_URL,
+
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     },
   },
 

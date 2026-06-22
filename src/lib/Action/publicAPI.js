@@ -1,18 +1,17 @@
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-export const getOpenTasks = async () => {
-  const res = await fetch(`${baseUrl}/api/public/tasks/open`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
+// Example modification inside your lib/Action/publicAPI.js file:
+export const getOpenTasks = async (page = 1, limit = 6, search = "", category = "all") => {
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    search: search,
+    category: category
   });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch open tasks");
-  }
-
-  return res.json();
+  const response = await fetch(`${baseUrl}/api/public/tasks/open?${queryParams.toString()}`);
+  if (!response.ok) throw new Error("Network error occurred");
+  return await response.json(); 
 };
 
 // Fetch a single task by its database ID
