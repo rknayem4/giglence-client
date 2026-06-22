@@ -1,7 +1,13 @@
+import { useRouter } from "next/navigation";
 import { Card } from "@heroui/react";
 import React from "react";
 
-const PopularCatCard = ({cat}) => {
+const PopularCatCard = ({ cat }) => {
+  const router = useRouter();
+  const handleCategoryNavigation = (slug) => {
+    // Route parameters push directly to marketplace page alongside chosen filter queries
+    router.push(`/tasks?category=${slug}`);
+  };
   return (
     <Card
       onClick={() => handleCategoryNavigation(cat.slug)}

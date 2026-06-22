@@ -18,7 +18,7 @@ export default function TaskBrowserPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const itemsPerPage = 6;
+const itemsPerPage = 9;
   const searchParams = useSearchParams();
   const activeCategoryFilter = searchParams.get("category");
 

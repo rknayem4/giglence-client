@@ -1,12 +1,10 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/navigation";
-import { Card } from "@heroui/react";
 import PopularCatCard from "./Card/PopularCatCard";
 
 export default function PopularCategories() {
-  const router = useRouter();
+
 
   // Categories payload array with explicit icons, design tokens, and database routing values
   const categories = [
@@ -123,10 +121,7 @@ export default function PopularCategories() {
     },
   ];
 
-  const handleCategoryNavigation = (slug) => {
-    // Route parameters push directly to marketplace page alongside chosen filter queries
-    router.push(`/tasks?category=${slug}`);
-  };
+  
 
   return (
     <section className="py-20 px-4 bg-white">
