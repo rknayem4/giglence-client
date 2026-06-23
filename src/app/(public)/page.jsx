@@ -13,7 +13,6 @@ const PublicHomePage = () => {
       <PopularCategories />
       <TopFreelancers />
       <Testimonials />
-      Public Home PublicHomePage
     </div>
   );
 };
