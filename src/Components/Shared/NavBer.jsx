@@ -18,18 +18,19 @@ const NavBar = () => {
     { name: "Browse Tasks", href: "/tasks" },
     { name: "Browse Freelancers", href: "/freelancers" },
 
-    ...(session?.user
-      ? [{ name: "Dashboard", href: "/dashboard/client" }]
-      : []),
     ...(session?.user.role == "freelancer"
       ? [{ name: "Dashboard", href: "/dashboard/freelancer" }]
       : []),
     ...(session?.user.role == "admin"
       ? [{ name: "Dashboard", href: "/dashboard/admin" }]
       : []),
+    ...(session?.user.role == "client"
+      ? [{ name: "Dashboard", href: "/dashboard/client" }]
+      : []),
   ];
 
   const [isOpen, setIsOpen] = useState(false);
+  console.log("User in NavBar:", user);
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-md">

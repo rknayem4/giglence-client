@@ -25,6 +25,11 @@ export default function CreateTaskPage() {
   const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    if (session?.user?.isSuspended) {
+      toast.error("Your account is suspended. Please contact support.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const formData = new FormData(e.currentTarget);

@@ -1,23 +1,24 @@
 import SidebarClient from "@/Components/ClientCom/SidebarClient";
-import { getUser } from "@/lib/session";
+import { getUser, RequireRole } from "@/lib/session";
 import { redirect } from "next/navigation";
 
 export default async function ClientLayout({ children }) {
   const user = await getUser();
+  await RequireRole("client");
 
   // 1. Guard check: If there is no session at all, kick them to login first
-  if (!user) {
-    redirect("/auth/login");
-  }
+  // if (!user) {
+  //   redirect("/auth/login");
+  // }
 
-  // 2. Authorization checks: Since we confirmed user exists, we can safely check roles
-  if (user.role === "freelancer") {
-    redirect("/dashboard/freelancer");
-  }
+  // // 2. Authorization checks: Since we confirmed user exists, we can safely check roles
+  // if (user.role === "freelancer") {
+  //   redirect("/dashboard/freelancer");
+  // }
 
-  if (user.role === "admin") {
-    redirect("/dashboard/admin");
-  }
+  // if (user.role === "admin") {
+  //   return redirect("/dashboard/admin");
+  // }
 
   return (
     <div className="min-h-screen bg-gray-50">

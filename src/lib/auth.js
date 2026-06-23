@@ -12,10 +12,14 @@ export const auth = betterAuth({
 
   user: {
     additionalFields: {
-      defaultValue: "client",
       companyName: {
         type: "string",
+        required: false,
+      },
+      role: {
+        type: "string",
         required: true,
+        defaultValue: "client",
       },
       companySize: {
         type: "string",
