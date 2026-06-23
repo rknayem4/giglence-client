@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Card, Button } from "@heroui/react";
+import { motion, AnimatePresence } from "framer-motion";
 import TestimonialsCard from "./Card/TestimonialsCard";
 
 export default function Testimonials() {
@@ -77,12 +78,47 @@ export default function Testimonials() {
   const currentReviews =
     activeTab === "client" ? clientReviews : freelancerReviews;
 
+  // Animation Grid Container Configurations
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08 },
+    },
+    exit: {
+      opacity: 0,
+      transition: { duration: 0.2 },
+    },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 15, scale: 0.97 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.4, ease: "easeOut" },
+    },
+    exit: {
+      opacity: 0,
+      y: -10,
+      scale: 0.97,
+      transition: { duration: 0.2 },
+    },
+  };
+
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-gray-50/30 to-white">
+    <section className="py-20 px-4 bg-gradient-to-b from-gray-50/30 to-white overflow-hidden">
       <div className="max-w-6xl mx-auto space-y-12">
         {/* Section Heading Content Layout */}
-        <div className="text-center space-y-4 max-w-xl mx-auto">
-          <span className="text-xs font-bold tracking-widest text-indigo-600 uppercase bg-indigo-50 px-3 py-1 rounded-full">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center space-y-4 max-w-xl mx-auto flex flex-col items-center"
+        >
+          <span className="inline-block text-xs font-bold tracking-widest text-indigo-600 uppercase bg-indigo-50 px-3 py-1 rounded-full">
             Community Stories
           </span>
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
@@ -94,36 +130,69 @@ export default function Testimonials() {
           </p>
 
           {/* Segmented Control / Tab Switcher Layout */}
-          <div className="inline-flex items-center bg-gray-100 p-1.5 rounded-2xl border border-gray-200/40 mx-auto">
+          <div className="relative inline-flex items-center bg-gray-100 p-1.5 rounded-2xl border border-gray-200/40 mt-2">
+            {/* Client Tab Button */}
             <button
               onClick={() => setActiveTab("client")}
-              className={`text-xs font-bold px-5 py-2 rounded-xl transition duration-200 ${
+              className={`relative text-xs font-bold px-5 py-2 rounded-xl transition duration-200 z-10 ${
                 activeTab === "client"
-                  ? "bg-white text-gray-900 shadow-sm"
+                  ? "text-gray-900"
                   : "text-gray-400 hover:text-gray-600"
               }`}
             >
+              {activeTab === "client" && (
+                <motion.div
+                  layoutId="activeTabSlider"
+                  className="absolute inset-0 bg-white shadow-sm rounded-xl -z-10"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
               Happy Clients
             </button>
+
+            {/* Freelancer Tab Button */}
             <button
               onClick={() => setActiveTab("freelancer")}
-              className={`text-xs font-bold px-5 py-2 rounded-xl transition duration-200 ${
+              className={`relative text-xs font-bold px-5 py-2 rounded-xl transition duration-200 z-10 ${
                 activeTab === "freelancer"
-                  ? "bg-white text-gray-900 shadow-sm"
+                  ? "text-gray-900"
                   : "text-gray-400 hover:text-gray-600"
               }`}
             >
+              {activeTab === "freelancer" && (
+                <motion.div
+                  layoutId="activeTabSlider"
+                  className="absolute inset-0 bg-white shadow-sm rounded-xl -z-10"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
               Top Freelancers
             </button>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Dynamic Review Card Grid Display Passing Passes */}
-        <div className="grid md:grid-cols-3 gap-6 pt-4">
-          {currentReviews.map((review) => (
-            <TestimonialsCard key={review.id} review={review} />
-          ))}
-        </div>
+        {/* Dynamic Review Card Grid Display with PopLayout Mode */}
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={activeTab}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="grid md:grid-cols-3 gap-6 pt-4"
+          >
+            {currentReviews.map((review) => (
+              <motion.div
+                key={review.id}
+                variants={cardVariants}
+                layout // Smoothly morphs cards if any shared layout attributes shift
+                className="h-full"
+              >
+                <TestimonialsCard review={review} />
+              </motion.div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </section>
   );

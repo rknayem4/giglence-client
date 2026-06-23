@@ -8,3 +8,12 @@ export const getSummaryOverviewAdmin = async () => {
   if (!res.ok) throw new Error("Failed to fetch task details");
   return res.json();
 }
+
+export const getPaymentsForAdmin = async () => {
+  const res = await fetch(`${baseUrl}/api/admin/payments`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!res.ok) throw new Error("Failed to fetch payments");
+  return res.json();
+};
