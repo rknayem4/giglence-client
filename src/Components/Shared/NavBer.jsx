@@ -30,7 +30,7 @@ const NavBar = () => {
   ];
 
   const [isOpen, setIsOpen] = useState(false);
-  console.log("User in NavBar:", user);
+  // console.log("User in NavBar:", user);
 
   return (
     <nav className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-md">

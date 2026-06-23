@@ -69,7 +69,7 @@ const itemsPerPage = 9;
 
     return () => clearTimeout(timer);
   }, [currentPage, searchQuery, selectedCategory]);
-  console.log(selectedCategory);
+  // console.log(selectedCategory);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">

@@ -35,48 +35,84 @@ const ProposalsTask = ({ task }) => {
     }
   }, [task?._id]);
 
-  // Action mutation handler
-  const handleAcceptProposal = async (acceptedProposalId) => {
-    if (!confirm("Are you sure?")) return;
-
+  const handleAcceptProposal = async (proposal) => {
     try {
-      setIsProcessing(true);
-
-      // FIX: Change from '/api/client/proposals/accept' to include your backend base address
-      // If you have an env file or baseUrl variable imported, use that:
-      const backendUrl =
-        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
-
-      const res = await fetch(`${backendUrl}/api/client/proposals/accept`, {
+      const res = await fetch("/api/checkout_sessions", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
+          proposalId: proposal._id,
+          freelancer_email: proposal.freelancer_email,
+          freelancer_id: proposal.freelancer_id,
+
           taskId: task._id,
-          acceptedProposalId: acceptedProposalId,
+          task_name: task.title,
+
+          client_email: task.client_email,
+
+          amount: Number(proposal.proposed_budget),
         }),
       });
 
-      const result = await res.json();
-      if (!res.ok)
-        throw new Error(result.error || "Failed to process acceptance.");
+      const data = await res.json();
 
-      toast.success("Proposal accepted!");
-      setTaskStatus("On the progress");
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to create checkout session");
+      }
 
-      // Sync local array elements state to reflect accepted/rejected instantly
-      setProposals((prev) =>
-        prev.map((prop) => ({
-          ...prop,
-          status: prop._id === acceptedProposalId ? "accepted" : "rejected",
-        })),
-      );
+      // window.location.href = data.url;  --- its error because of nextjs 13, so we use this
+      // window.open(data.url, "_blank");
+      window.location.href = data.url;
     } catch (error) {
-      toast.error(error.message || "An unexpected error occurred.");
-    } finally {
-      setIsProcessing(false);
+      toast.error(error.message);
     }
   };
-  
+
+  // Action mutation handler
+  // const handleAcceptProposals = async (acceptedProposalId) => {
+  //   if (!confirm("Are you sure?")) return;
+
+  //   try {
+  //     setIsProcessing(true);
+
+  //     // FIX: Change from '/api/client/proposals/accept' to include your backend base address
+  //     // If you have an env file or baseUrl variable imported, use that:
+  //     const backendUrl =
+  //       process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+
+  //     const res = await fetch(`${backendUrl}/api/client/proposals/accept`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         taskId: task._id,
+  //         acceptedProposalId: acceptedProposalId,
+  //       }),
+  //     });
+
+  //     const result = await res.json();
+  //     if (!res.ok)
+  //       throw new Error(result.error || "Failed to process acceptance.");
+
+  //     toast.success("Proposal accepted!");
+  //     setTaskStatus("On the progress");
+
+  //     // Sync local array elements state to reflect accepted/rejected instantly
+  //     setProposals((prev) =>
+  //       prev.map((prop) => ({
+  //         ...prop,
+  //         status: prop._id === acceptedProposalId ? "accepted" : "rejected",
+  //       })),
+  //     );
+  //   } catch (error) {
+  //     toast.error(error.message || "An unexpected error occurred.");
+  //   } finally {
+  //     setIsProcessing(false);
+  //   }
+  // };
+  // console.log(task, taskStatus, proposals);
+
   return (
     <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-xl overflow-hidden my-5">
       {/* Task Information Heading Grid Header */}
@@ -144,7 +180,10 @@ const ProposalsTask = ({ task }) => {
                     >
                       {/* Flexed key matching checks for fallback to alternative schema names */}
                       <Table.Cell className="font-semibold text-gray-800">
-                        <Link href={`/freelancers/${proposal.freelancer_id}`} className="underline">
+                        <Link
+                          href={`/freelancers/${proposal.freelancer_id}`}
+                          className="underline"
+                        >
                           {proposal.freelancer_email ||
                             proposal.freelancer_name ||
                             "Independent Specialist"}
@@ -176,13 +215,20 @@ const ProposalsTask = ({ task }) => {
                       <Table.Cell>
                         {taskStatus !== "On the progress" &&
                         currentPropStatus === "pending" ? (
+                          // <Button
+                          //   size="sm"
+                          //   disabled={isProcessing}
+                          //   onClick={() => handleAcceptProposal(proposal._id)}
+                          //   className="bg-blue-600 hover:bg-blue-700 font-bold text-white text-xs px-4 rounded-xl shadow-md transition"
+                          // >
+                          //   Accept Bid
+                          // </Button>
                           <Button
                             size="sm"
-                            disabled={isProcessing}
-                            onClick={() => handleAcceptProposal(proposal._id)}
+                            onClick={() => handleAcceptProposal(proposal)}
                             className="bg-blue-600 hover:bg-blue-700 font-bold text-white text-xs px-4 rounded-xl shadow-md transition"
                           >
-                            Accept Bid
+                            Accept & Pay
                           </Button>
                         ) : currentPropStatus === "accepted" ? (
                           <span className="text-xs text-green-600 font-semibold italic">
