@@ -7,17 +7,35 @@ import { motion } from "framer-motion";
 
 const HomeTaskCard = ({ task }) => {
   return (
-    // Wrapped HeroUI Card inside a motion.div for fluid lift & hover shadow adjustments
     <motion.div
-      whileHover={{ 
-        y: -6, 
-        transition: { duration: 0.2, ease: "easeInOut" } 
+      // Lift the card and transition the border color directly via Framer Motion variants
+      whileHover="hover"
+      initial="initial"
+      variants={{
+        initial: { y: 0 },
+        hover: { y: -6 }
       }}
-      className="h-full group" // Added group class to trigger title text color change on hover
+      transition={{ duration: 0.25, ease: "easeInOut" }}
+      className="h-full group" 
     >
+      {/* Converted HeroUI Card layout to a motion-enhanced element using motion(Card) 
+        This lets Framer Motion smoothly animate the borderColor and boxShadow property paths.
+      */}
       <Card
+        as={motion.div}
+        variants={{
+          initial: { 
+            borderColor: "rgba(243, 244, 246, 1)", // border-gray-100
+            boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)" // shadow-sm
+          },
+          hover: { 
+            borderColor: "rgba(233, 213, 255, 1)", // border-purple-200
+            boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" // shadow-xl
+          }
+        }}
+        transition={{ duration: 0.25, ease: "easeInOut" }}
         key={task._id}
-        className="h-full border border-gray-100 group-hover:border-purple-200 group-hover:shadow-xl transition-all duration-300 bg-white rounded-3xl overflow-hidden shadow-sm"
+        className="h-full border bg-white rounded-3xl overflow-hidden"
       >
         {/* Card Body content framework */}
         <Card.Content className="p-6 space-y-4">
@@ -49,7 +67,7 @@ const HomeTaskCard = ({ task }) => {
         </Card.Content>
 
         {/* Subcomponent hook: Card.Footer */}
-        <Card.Footer className="bg-gray-50/70 border-t border-gray-50 p-4 px-6 flex flex-col gap-3 mt-auto">
+        <Card.Footer className="bg-gray-50/70 border-t border-gray-100 p-4 px-6 flex flex-col gap-3 mt-auto">
           <div className="flex justify-between items-center w-full text-xs text-gray-500">
             <div>
               <span className="text-[10px] text-gray-400 block font-medium">
@@ -76,7 +94,6 @@ const HomeTaskCard = ({ task }) => {
           </div>
           
           <Link href={`/tasks/${task._id}`} className="w-full block">
-            {/* Added subtle scale press effect onto the call-to-action button */}
             <motion.div
               whileTap={{ scale: 0.98 }}
               className="w-full"
