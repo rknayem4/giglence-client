@@ -30,7 +30,7 @@ export default function FeaturedTasks() {
 
     fetchLatestTasks();
   }, []);
-  console.log(tasks)
+  // console.log(tasks)
 
   return (
     <section className="py-20 px-4 bg-gradient-to-b from-white to-gray-50/50">
