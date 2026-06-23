@@ -5,8 +5,6 @@ import {
   Activity, 
   DollarSign, 
   TrendingUp, 
-  CheckCircle, 
-  AlertCircle 
 } from 'lucide-react'; // Elegant modern icons
 import { getSummaryOverviewAdmin } from '@/lib/admin/admin';
 
@@ -14,7 +12,7 @@ const AdminHomePage = async () => {
   // Mock data representing what you will pass from your backend APIs
 
   const dynamicStats = await getSummaryOverviewAdmin();
-  console.log("Dynamic Stats from API:", dynamicStats);
+  // console.log("Dynamic Stats from API:", dynamicStats);
   const stats = [
     {
       title: "Total Users",
@@ -38,8 +36,8 @@ const AdminHomePage = async () => {
       iconColor: "text-amber-600 bg-amber-50",
     },
     {
-      title: "Total Revenue",
-      value: dynamicStats.totalRevenue || "$14,250.00", // Fallback to mock data if API fails
+      title: "Total Transactions",
+      value: dynamicStats.totalTransactions ? Number(dynamicStats.totalTransactions).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "14,250.00", // Fallback to mock data if API fails
       change: "+24% vs last month",
       icon: DollarSign,
       iconColor: "text-green-600 bg-green-50",

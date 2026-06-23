@@ -42,8 +42,8 @@ const links = [
     icon: SquarePlus,
   },
   {
-    name: "My Expend",
-    href: "/dashboard/client/expend",
+    name: "My Spent",
+    href: "/dashboard/client/spent",
     icon: CreditCard,
   },
   {
