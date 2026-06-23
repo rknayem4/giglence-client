@@ -87,7 +87,6 @@ const SuccessPaymentPage = async ({ searchParams }) => {
       headers: {
         "Content-Type": "application/json",
       },
-
       body: JSON.stringify({
         taskId: session.metadata.taskId,
 
