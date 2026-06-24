@@ -8,7 +8,6 @@ import {
   Clock,
   ArrowUpRight,
 } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
 import { getSummaryOverviewClient } from "@/lib/Action/ClientAPI/client";
 import { getUser } from "@/lib/session";
 
