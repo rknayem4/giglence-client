@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@heroui/react";
 import toast from "react-hot-toast";
+import { authClient } from "@/lib/auth-client";
 
 export default function AdminTasks() {
   const [tasks, setTasks] = useState([]);
@@ -15,7 +16,12 @@ export default function AdminTasks() {
         setLoading(true);
         const baseUrl =
           process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
-        const res = await fetch(`${baseUrl}/api/admin/tasks`);
+        const { data: tokenData } = await authClient.token();
+        const res = await fetch(`${baseUrl}/api/admin/tasks`, {
+          headers: {
+            authorization: `Bearer ${tokenData.token}`,
+          },
+        });
 
         if (!res.ok)
           throw new Error("Failed to pull marketplace task records.");
@@ -44,10 +50,13 @@ export default function AdminTasks() {
       setProcessingId(taskId);
       const baseUrl =
         process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
-
+      const { data: tokenData } = await authClient.token();
       const res = await fetch(`${baseUrl}/api/admin/tasks/${taskId}/block`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${tokenData.token}`,
+        },
         body: JSON.stringify({ blockTask }),
       });
 
@@ -77,21 +86,31 @@ export default function AdminTasks() {
   };
 
   const handleDeleteTask = async (taskId) => {
-    if (!confirm("Are you sure you want to permanently delete this open task? This action cannot be undone.")) return;
+    if (
+      !confirm(
+        "Are you sure you want to permanently delete this open task? This action cannot be undone.",
+      )
+    )
+      return;
 
     try {
       setProcessingId(taskId);
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
-
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+        const { data: tokenData } = await authClient.token();
       const res = await fetch(`${baseUrl}/api/admin/tasks/${taskId}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+          authorization: `Bearer ${tokenData.token}`,
+        },
       });
 
       const result = await res.json();
-      if (!res.ok) throw new Error(result.error || "Deletion validation check failed.");
+      if (!res.ok)
+        throw new Error(result.error || "Deletion validation check failed.");
 
       toast.success("Open task deleted successfully.");
-      setTasks(prev => prev.filter(task => task._id !== taskId));
+      setTasks((prev) => prev.filter((task) => task._id !== taskId));
     } catch (err) {
       toast.error(err.message || "An unexpected error occurred.");
     } finally {
@@ -113,7 +132,8 @@ export default function AdminTasks() {
           Marketplace Project Audit Panel
         </h2>
         <p className="text-xs text-gray-400 mt-1">
-          Review job listings. Only <strong>open</strong> tasks can be deleted from the system entirely.
+          Review job listings. Only <strong>open</strong> tasks can be deleted
+          from the system entirely.
         </p>
       </div>
 
@@ -132,7 +152,10 @@ export default function AdminTasks() {
             <tbody className="divide-y divide-gray-50 text-sm text-gray-600">
               {tasks.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="p-8 text-center text-gray-400 italic">
+                  <td
+                    colSpan="5"
+                    className="p-8 text-center text-gray-400 italic"
+                  >
                     No project listings posted inside database indexes yet.
                   </td>
                 </tr>
@@ -146,11 +169,18 @@ export default function AdminTasks() {
                     currentStatus === "On the progress";
 
                   return (
-                    <tr key={task._id} className="hover:bg-gray-50/50 transition duration-150">
+                    <tr
+                      key={task._id}
+                      className="hover:bg-gray-50/50 transition duration-150"
+                    >
                       {/* Title Details */}
                       <td className="p-4 pl-6 max-w-xs">
-                        <div className="font-bold text-gray-800 truncate">{task.title}</div>
-                        <div className="text-xs text-gray-400 line-clamp-1 mt-0.5">{task.description}</div>
+                        <div className="font-bold text-gray-800 truncate">
+                          {task.title}
+                        </div>
+                        <div className="text-xs text-gray-400 line-clamp-1 mt-0.5">
+                          {task.description}
+                        </div>
                       </td>
 
                       {/* Email Coordinates */}
@@ -159,19 +189,24 @@ export default function AdminTasks() {
                       </td>
 
                       {/* Allocated Budget */}
-                      <td className="p-4 font-bold text-purple-600">${task.budget}</td>
+                      <td className="p-4 font-bold text-purple-600">
+                        ${task.budget}
+                      </td>
 
                       {/* Current System Status Badges */}
                       <td className="p-4">
-                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-md border uppercase tracking-wider ${
-                          currentStatus === "blocked"
-                            ? "bg-red-50 text-red-600 border-red-100"
-                            : currentStatus === "completed"
-                              ? "bg-gray-100 text-gray-500 border-gray-200"
-                              : currentStatus === "accepted" || currentStatus === "On the progress"
-                                ? "bg-blue-50 text-blue-600 border-blue-100"
-                                : "bg-emerald-50 text-emerald-600 border-emerald-100"
-                        }`}>
+                        <span
+                          className={`text-[10px] font-bold px-2.5 py-0.5 rounded-md border uppercase tracking-wider ${
+                            currentStatus === "blocked"
+                              ? "bg-red-50 text-red-600 border-red-100"
+                              : currentStatus === "completed"
+                                ? "bg-gray-100 text-gray-500 border-gray-200"
+                                : currentStatus === "accepted" ||
+                                    currentStatus === "On the progress"
+                                  ? "bg-blue-50 text-blue-600 border-blue-100"
+                                  : "bg-emerald-50 text-emerald-600 border-emerald-100"
+                          }`}
+                        >
                           {currentStatus}
                         </span>
                       </td>
@@ -180,7 +215,9 @@ export default function AdminTasks() {
                       <td className="p-4 pr-6 text-right flex items-center justify-end gap-2 h-full min-h-[64px]">
                         {isLockedFromMod ? (
                           <span className="text-xs text-gray-400 italic font-medium pr-2">
-                            {currentStatus === "completed" ? "Project Finalized" : "Contract Active"}
+                            {currentStatus === "completed"
+                              ? "Project Finalized"
+                              : "Contract Active"}
                           </span>
                         ) : (
                           <>
@@ -188,14 +225,18 @@ export default function AdminTasks() {
                               size="sm"
                               isDisabled={processingId === task._id}
                               isLoading={processingId === task._id}
-                              onClick={() => handleToggleBlock(task._id, currentStatus)}
+                              onClick={() =>
+                                handleToggleBlock(task._id, currentStatus)
+                              }
                               className={`text-xs font-bold px-4 h-8 rounded-xl transition ${
                                 currentStatus === "blocked"
                                   ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
                                   : "bg-red-50 hover:bg-red-100 text-red-600 border border-red-100"
                               }`}
                             >
-                              {currentStatus === "blocked" ? "Unblock" : "Block"}
+                              {currentStatus === "blocked"
+                                ? "Unblock"
+                                : "Block"}
                             </Button>
 
                             {/* Render Delete Option ONLY if status is open */}

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@heroui/react";
 import toast from "react-hot-toast";
+import { authClient } from "@/lib/auth-client";
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -15,7 +16,14 @@ export default function UserManagement() {
         setLoading(true);
         const baseUrl =
           process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
-        const res = await fetch(`${baseUrl}/api/admin/users`);
+          const { data: tokenData } = await authClient.token();
+          console.log("Admin Token:", tokenData.token); // Log the token for debugging purposes
+        const res = await fetch(`${baseUrl}/api/admin/users`,{
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${tokenData.token}`,
+          },
+        });
 
         if (!res.ok) throw new Error("Failed to pull system user registries.");
         const data = await res.json();
@@ -41,10 +49,14 @@ export default function UserManagement() {
       setProcessingId(userId);
       const baseUrl =
         process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+      const { data: tokenData } = await authClient.token(); // Log the token for debugging purposes
 
       const res = await fetch(`${baseUrl}/api/admin/users/${userId}/suspend`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${tokenData.token}`,
+        },
         body: JSON.stringify({ isSuspended: nextStatus }),
       });
 
