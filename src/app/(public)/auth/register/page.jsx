@@ -2,10 +2,16 @@
 
 import FreelancerRegisterPage from "@/Components/auth/Freelancer";
 import ClientRegisterPage from "@/Components/auth/RegisterClient";
+import { getUser } from "@/lib/session";
 import { Tabs } from "@heroui/react";
+import { redirect } from "next/navigation";
 import React from "react";
 
-const RegisterPage = () => {
+const RegisterPage = async() => {
+  const user = await getUser()
+  if(user){
+    redirect('/')
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#3B82F6]/10 via-white to-[#8B5CF6]/10 px-4 py-12">
       <h2 className="text-center text-2xl font-semibold mb-3">Registration </h2>
