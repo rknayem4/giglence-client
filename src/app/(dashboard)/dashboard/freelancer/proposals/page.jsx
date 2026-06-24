@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Briefcase, Coins, Calendar, FileText } from "@gravity-ui/icons";
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
-import { BsCurrencyBitcoin } from "react-icons/bs";
 import { getFreelancerProposalsById } from "@/lib/Action/proposals";
 import ProposalsFreeCard from "@/Components/FreelancerCom/ProposalsFreeCard";
 

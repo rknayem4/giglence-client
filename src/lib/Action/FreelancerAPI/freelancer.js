@@ -1,13 +1,21 @@
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const getSummaryOverviewFreelancer = async (email) => {
   if (!email) return null;
-
+  const { token } = await auth.api.getToken({
+    headers: await headers(),
+  });
   const res = await fetch(
     `${baseUrl}/api/freelancer/dashboard-summary?email=${encodeURIComponent(email)}`,
     {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
       cache: "no-store",
     },
   );
@@ -24,11 +32,16 @@ export const getPaymentsForFreelancer = async (email) => {
     if (!email) return [];
 
     // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
-
+      const { token } = await auth.api.getToken({
+    headers: await headers(),
+  });
     const res = await fetch(
       `${baseUrl}/api/freelancer/payments?email=${encodeURIComponent(email)}`,
       {
         cache: "no-store", // Bypasses Next.js caching layers to show real-time incoming transfers
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
       },
     );
 

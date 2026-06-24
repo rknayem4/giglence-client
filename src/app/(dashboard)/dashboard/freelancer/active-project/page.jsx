@@ -23,8 +23,14 @@ export default function ActiveProjects() {
         setLoading(true);
         const baseUrl =
           process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+        const { data: tokenData } = await authClient.token();
         const res = await fetch(
           `${baseUrl}/api/freelancer/active-projects?freelancerEmail=${session.user.email}`,
+          {
+            headers: {
+              authorization: `Bearer ${tokenData.token}`,
+            },
+          },
         );
 
         if (!res.ok)
@@ -55,6 +61,7 @@ export default function ActiveProjects() {
       setIsSubmitting(true);
       const baseUrl =
         process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+      const { data: tokenData } = await authClient.token();
 
       // Match properties cleanly into request schema requirements
       const payload = {
@@ -70,7 +77,10 @@ export default function ActiveProjects() {
 
       const res = await fetch(`${baseUrl}/api/freelancer/projects/submit`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${tokenData.token}`,
+        },
         body: JSON.stringify(payload),
       });
 

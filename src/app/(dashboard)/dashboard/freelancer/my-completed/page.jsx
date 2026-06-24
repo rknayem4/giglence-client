@@ -16,8 +16,13 @@ export default function FreelancerCompleted() {
       try {
         setLoading(true);
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
-        const res = await fetch(`${baseUrl}/api/dashboard/completed-projects?email=${session.user.email}&role=freelancer`);
-        
+        const { data: tokenData } = await authClient.token();
+        const res = await fetch(`${baseUrl}/api/dashboard/completed-projects?email=${session.user.email}&role=freelancer`, {
+          headers: {
+            authorization: `Bearer ${tokenData.token}`,
+          },
+        });
+
         if (!res.ok) throw new Error("Failed to pull archived dataset lists.");
         const data = await res.json();
         setCompletedList(data);
