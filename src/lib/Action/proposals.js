@@ -18,41 +18,25 @@ export const submitProposal = async (proposalData) => {
   return data;
 };
 
-
-
 export const getFreelancerProposalsById = async (freelancerId) => {
   if (!freelancerId) return [];
-  const {data: tokenData} = await authClient.token();
-  console.log("Token for fetching proposals:", tokenData.token); // Log the token for debugging purposes
-  const res = await fetch(`${baseUrl}/api/freelancer/proposals?freelancerId=${freelancerId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      authorization: `Bearer ${tokenData.token}`,
+  const { data: tokenData } = await authClient.token();
+  const res = await fetch(
+    `${baseUrl}/api/freelancer/proposals?freelancerId=${freelancerId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${tokenData.token}`,
+      },
     },
-  });
+  );
 
   if (!res.ok) {
     throw new Error("Failed to fetch proposals");
   }
 
   return res.json();
-  };
-
-export const getProposalsByTaskId = async (taskId) => {
-  // Fix: Check for taskId, not clientId
-  if (!taskId) return []; 
-
-  const res = await fetch(`${baseUrl}/api/client/proposals?taskId=${taskId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch proposals for this task");
-  }
-
-  return res.json();
 };
+
+

@@ -1,6 +1,7 @@
 "use client";
 
-import { getProposalsByTaskId } from "@/lib/Action/proposals";
+
+import { getProposalsByTaskId } from "@/lib/Action/ClientAPI/clientAPI";
 import { Table, Button } from "@heroui/react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";

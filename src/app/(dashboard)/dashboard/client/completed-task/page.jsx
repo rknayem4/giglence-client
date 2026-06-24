@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { LinkIcon } from "@gravity-ui/icons";
 import toast from "react-hot-toast";
 import { CiLink } from "react-icons/ci";
 
@@ -18,8 +17,13 @@ export default function ClientCompleted() {
         setLoading(true);
         const baseUrl =
           process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:8000";
+          const {data: tokenData} = await authClient.token();
         const res = await fetch(
-          `${baseUrl}/api/dashboard/completed-projects?email=${session.user.email}&role=client`,
+          `${baseUrl}/api/client/completed-projects?email=${session.user.email}&role=client`,{
+            headers: {
+              authorization: `Bearer ${tokenData.token}`,
+            }
+          }
         );
 
         if (!res.ok) throw new Error("Failed to load historical completions.");
@@ -83,7 +87,7 @@ export default function ClientCompleted() {
                   <strong className="text-xs text-purple-500 uppercase font-bold block mb-1">
                     Freelancer Cover Handover Message:
                   </strong>
-                  "{item.message}"
+                  {item.message}
                 </div>
               )}
 

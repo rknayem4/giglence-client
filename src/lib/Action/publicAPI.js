@@ -16,7 +16,7 @@ export const getOpenTasks = async (page = 1, limit = 6, search = "", category = 
 
 // Fetch a single task by its database ID
 export const getSingleTask = async (taskId) => {
-  const res = await fetch(`${baseUrl}/api/tasks/${taskId}`, {
+  const res = await fetch(`${baseUrl}/api/public/tasks/${taskId}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
