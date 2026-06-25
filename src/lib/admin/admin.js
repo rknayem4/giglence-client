@@ -15,6 +15,7 @@ export const getSummaryOverviewAdmin = async () => {
       authorization: `Bearer ${token}`,
     },
   });
+  console.log(res.status, res.statusText)
   if (!res.ok) throw new Error("Failed to fetch task details");
   return await res.json();
 };
