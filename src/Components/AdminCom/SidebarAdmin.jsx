@@ -35,11 +35,6 @@ const links = [
     href: "/dashboard/admin/transactions-history",
     icon: CreditCard,
   },
-  {
-    name: "Edit Profile",
-    href: "/dashboard/admin/profile",
-    icon: PersonPencil,
-  },
 ];
 
 export default function SidebarAdmin() {
