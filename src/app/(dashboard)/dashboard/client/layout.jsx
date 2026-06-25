@@ -1,11 +1,7 @@
 import SidebarClient from "@/Components/ClientCom/SidebarClient";
-import { getUser, RequireRole } from "@/lib/session";
-import { redirect } from "next/navigation";
 
 export default async function ClientLayout({ children }) {
-  const user = await getUser();
   await RequireRole("client");
-
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -16,3 +12,4 @@ export default async function ClientLayout({ children }) {
     </div>
   );
 }
+// 
