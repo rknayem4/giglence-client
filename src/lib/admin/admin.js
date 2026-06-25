@@ -1,3 +1,4 @@
+'use server'
 import { headers } from "next/headers";
 import { auth } from "../auth";
 
@@ -15,7 +16,7 @@ export const getSummaryOverviewAdmin = async () => {
     },
   });
   if (!res.ok) throw new Error("Failed to fetch task details");
-  return res.json();
+  return await res.json();
 };
 
 export const getPaymentsForAdmin = async () => {
