@@ -6,7 +6,7 @@ A modern freelance marketplace platform connecting clients with talented freelan
 
 ## 🌐 Live Demo
 
-**Frontend:** https://your-live-site.com
+**Frontend:** https://giglence.vercel.app
 
 **Server:** https://your-api.com
 
