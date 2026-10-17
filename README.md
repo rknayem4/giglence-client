@@ -8,7 +8,7 @@ A modern freelance marketplace platform connecting clients with talented freelan
 
 **Frontend:** https://giglence.vercel.app
 
-**Server:** https://your-api.com
+**Server:** https://giglence-server.vercel.app
 
 ---
 
